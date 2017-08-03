@@ -1,0 +1,23 @@
+.image-icon {
+  max-width: 50px;
+  height: auto;
+  border-radius: 50%;
+}
+
+.tovia-container {
+  border: 1px solid black;
+}
+
+.name-row, .message-row, .expiration-row {
+  padding: 0 1%;
+}
+
+.passphrase-component {
+  text-align: center;
+}
+
+.tovia-header {
+  padding: 2%;
+  font-size: 27px;
+  font-weight: 700;
+}

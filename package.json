@@ -21,7 +21,8 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-notification": "^6.7.1",
-    "react-toolbox": "^2.0.0-beta.12"
+    "react-toolbox": "^2.0.0-beta.12",
+    "reactstrap": "^4.8.0"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
