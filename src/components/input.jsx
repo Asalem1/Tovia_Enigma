@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+// import { shape, string } from 'prop-types'
 
-export default class App extends Component {
+// import { Button } from 'react-toolbox/lib/button/button'
+// import CalendarMonth from 'react-toolbox/lib/date_picker/CalendarMonth';
+
+export default class Input extends Component {
   constructor(props) {
     super(props);
     this.state = {}
@@ -8,19 +12,34 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-xs-5 offset-xs-4 tovia-container">
+      <div>
+        <p>Hello World!</p>
+      </div>
+    )
+  }
+}
+
+// Input.propTypes = {
+//   // show (if show is on props): shape({
+//     // poster: string.isRequired,
+//     // year: string.isRequired,
+//   // }).isRequired
+// }
+// going to need to use Calendar for project
+   // <CalendarMonth getMonth={Month}/>
+    /*  <div className="container">
+        <div className="row tovia-container">
+          <div className="col-md-5 offset-md-3">
             <header className="row">
-              <p className="tovia-header">Tovia's Enigma</p>
+              <h1>Tovia's Enigma</h1>
             </header>
             <div>
               <form>
-                <div className="row name-row">
-                  <div className="col-xs-2">
+                <div className="row">
+                  <div className="col-md-2">
                     <img src="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
                   </div>
-                  <div className="col-xs-5">
+                  <div className="col-md-5">
                     <div className="row">
                       <label htmlFor="name">Name *</label>
                     </div>
@@ -58,18 +77,4 @@ export default class App extends Component {
             </div>
           </div>
         </div>
-        <div className="row passphrase-component">
-          <div className="row">
-            <div>
-              <p>Your Passphrase - <a href="#"> Rp9Vz </a></p>
-            </div>
-          </div>
-          <div className="row">
-            <a href="#">Generate new Passphrase</a>
-          </div>
-        </div>
-      </div>
-    )
-  }
-}
-
+      </div> */

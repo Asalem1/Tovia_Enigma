@@ -3,11 +3,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-let port = process.env.PORT || 3000
+const port = process.env.PORT || 3000
 
 // Setup View Engine
-app.set('views', path.join(__dirname +  '/views'));
-app.set('view engine', 'ejs'); //specifies which view engine we want to use
+app.set('views', path.join(__dirname,  'views'));
+app.set('view engine', 'ejs');
 
 // Allows us to render html files
 app.engine('html', require('ejs').renderFile);
@@ -24,6 +24,6 @@ app.get('/', (req, res) => {
   });
 
 
-app.listen(process.env.PORT || port, function() {
+app.listen(process.env.PORT || port, () => {
   console.log('the server is connected to port: ', port);
 })
