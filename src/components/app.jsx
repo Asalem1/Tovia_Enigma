@@ -8,19 +8,11 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Hello world!</h1>
-      </div>
-    )
-  }
-}
-      /*
-
       <div className="container-fluid">
         <div className="row">
           <div className="col-xs-5 offset-xs-4 tovia-container">
             <header className="row">
-              <p className="tovia-header">Tovia's Enigma</p>
+              <p className="tovia-header">{"Tovia's Enigma"}</p>
             </header>
             <div>
               <form>
@@ -69,12 +61,17 @@ export default class App extends Component {
         <div className="row passphrase-component">
           <div className="row">
             <div>
-              <p>Your Passphrase - <a href="#"> Rp9Vz </a></p>
+              <p>Your Passphrase - <a> Rp9Vz </a></p>
             </div>
           </div>
           <div className="row">
-            <a href="#">Generate new Passphrase</a>
+            <a>Generate new Passphrase</a>
           </div>
         </div>
       </div>
+    )
+  }
+}
+      /*
+
       */
