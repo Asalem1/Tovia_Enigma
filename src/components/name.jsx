@@ -12,7 +12,7 @@ export default class Name extends Component {
 
   onValueChange(event) {
     const { value }= event.target;
-    this.setState({ value: value });
+    this.setState({  value });
     if (!value.length) {
       this.setState({ visibility: 'hidden' })
     } else {

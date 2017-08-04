@@ -28,17 +28,12 @@ export default class Message extends Component {
 
   setValue(event) {
     const { value }= event.target;
-    this.setState({ value: value });
+    this.setState({ value });
     if (!value.length) {
       this.setState({ visibility: 'hidden' })
     } else {
       this.setState({ visibility: 'visible' })
     }
-  }
-
-  wordCount() {
-    const charCount = this.state.value.split('').length;
-    return charCount;
   }
 
   getExpandableField() {
@@ -61,7 +56,7 @@ export default class Message extends Component {
           className="textarea"
           name="textarea"
           id="textarea"
-          autoFocus={true}
+
           defaultValue={value}
           maxLength="120"
           style={{
@@ -83,12 +78,20 @@ export default class Message extends Component {
     return (
       <div
         className="textarea textarea--ghost"
-        ref={(c) => this.ghost = c}
+        ref={(c) => {
+          this.ghost = c
+          }
+        }
         aria-hidden="true"
       >
         {this.state.value}
       </div>
     );
+  }
+
+  wordCount() {
+    const charCount = this.state.value.split('').length;
+    return charCount;
   }
 
   render() {

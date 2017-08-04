@@ -11,9 +11,9 @@ export default class Expiration extends Component {
   }
 
   triggerCalendar(event) {
-    //modal calendar;
+    // modal calendar;
     const { value }= event.target;
-    this.setState({ value: value });
+    this.setState({ value });
     if (!value.length) {
       this.setState({ visibility: 'hidden' })
     } else {
