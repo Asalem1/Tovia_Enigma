@@ -32,8 +32,8 @@ export default class Name extends Component {
       fontSize: '12px',
     }
     return (
-      <div className="container">
-        <label style={visibility} htmlFor="expiration">Expiration date <i style={asteriks}>*</i></label>
+      <div className="container name-container">
+        <label style={visibility} htmlFor="expiration">Name <i style={asteriks}>*</i></label>
         <input
           className="name-input"
           placeholder="Name *"

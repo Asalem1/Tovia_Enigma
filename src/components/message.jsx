@@ -51,12 +51,10 @@ export default class Message extends Component {
     const { height, value } = this.state;
     return (
       <div>
-        <label style={visibility} htmlFor="textarea">Message <i style={asteriks}>*</i></label>
+        <label style={visibility} className="message-label" htmlFor="message">Message <i className="asteriks" style={asteriks}>*</i></label>
         <textarea
-          className="textarea"
-          name="textarea"
-          id="textarea"
-
+          className="message-textarea"
+          name="message"
           defaultValue={value}
           maxLength="120"
           style={{
@@ -77,7 +75,7 @@ export default class Message extends Component {
   getGhostField() {
     return (
       <div
-        className="textarea textarea--ghost"
+        className="message-textarea message-ghost"
         ref={(c) => {
           this.ghost = c
           }
@@ -96,7 +94,7 @@ export default class Message extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div className="container message-container">
         {this.getExpandableField()}
         {this.getGhostField()}
       </div>

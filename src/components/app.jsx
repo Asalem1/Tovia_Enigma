@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import Expiration from './expiration';
+import Message from './message';
+import Name from './name';
 
 export default class App extends Component {
   constructor(props) {
@@ -10,7 +13,7 @@ export default class App extends Component {
     return (
       <div className="container-fluid">
         <div className="row">
-          <div className="col-xs-5 offset-xs-4 tovia-container">
+          <div className="col-xs-4 offset-xs-4 tovia-container">
             <header className="row">
               <p className="tovia-header">{"Tovia's Enigma"}</p>
             </header>
@@ -20,30 +23,15 @@ export default class App extends Component {
                   <div className="col-xs-2">
                     <img src="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
                   </div>
-                  <div className="col-xs-5">
-                    <div className="row">
-                      <label htmlFor="name">Name *</label>
-                    </div>
-                    <div className="row">
-                      <input className="name-input" placeholder="Name *"/>
-                    </div>
+                  <div className="col-xs-9">
+                    <Name />
                   </div>
                 </div>
                 <div className="row message-row">
-                  <div className="row">
-                    <p>Message * </p>
-                  </div>
-                  <div className="row">
-                    <input className="message-input" placeholder="Message *"/>
-                  </div>
+                  <Message />
                 </div>
                 <div className="row expiration-row">
-                  <div className="row">
-                    <p>Expiration date * </p>
-                  </div>
-                  <div className="row">
-                    <input className="expiration-input" placeholder="Expiration date *"/>
-                  </div>
+                  <Expiration />
                 </div>
                 <br />
                 <div className="row">

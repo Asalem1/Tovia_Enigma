@@ -12,6 +12,57 @@
   padding: 0 1%;
 }
 
+.name-container {
+  margin-top: -10px;
+}
+
+.name-input, .expiration-input, .message-textarea {
+  width: 100%;
+  outline: none;
+  min-height: 30px;
+  margin-top: -5px;
+  display: block;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,0.3);
+  overflow: hidden;
+  transition: height 0.1s ease;
+}
+
+.message-container {
+  margin-top: 20px;
+}
+
+.expiration-container {
+  margin-left: 12.5px;
+}
+
+.expiration-input {
+  width: 90%;
+}
+
+.message-textarea, .expiration-input {
+  margin-top: -10px;
+}
+
+.message-textarea:focus, .name-input:focus {
+  border-bottom: 1.5px solid rgb(117,129,201);
+}
+
+.message-ghost {
+  visibility: hidden;
+  position: absolute;
+}
+
+.message-label {
+  color: rgba(0,0,0, 0.3);
+}
+
+.word-limit {
+  float: right;
+  font-size: 12px;
+  color: rgba(0,0,0,0.3);
+}
+
 .passphrase-component {
   text-align: center;
 }
