@@ -5,12 +5,12 @@ export default class Message extends Component {
     super(props);
     this.state = {
       height: 30,
-      value: this.props.value,
+      value: '',
       visibility: 'hidden',
     };
-    // this.setMessageValue = this.setMessageValue.bind(this);
     this.setFilledTextareaHeight = this.setFilledTextareaHeight.bind(this);
     this.toggleVisibility = this.toggleVisibility.bind(this);
+    this.toggleChange = this.toggleChange.bind(this);
   }
 
   componentDidMount() {
@@ -31,13 +31,11 @@ export default class Message extends Component {
     this.setState({ visibility: 'visible' });
   }
 
-  componentDidUpdate() {
-    const { value }= this.refs.message.value;
-    console.log('this is the value: ', value)
-    this.setState({ value });
-    // if (!value.length) {
-    //   this.setState({ visibility: 'hidden' })
-    // }
+  toggleChange(event) {
+    console.log('here are the props: ', this.props)
+    this.props.setMessageValue(event);
+    const { value } = this.refs.message;
+    this.setState({ value })
   }
 
   getExpandableField() {
@@ -66,7 +64,7 @@ export default class Message extends Component {
             resize: isOneLine ? "none" : null
           }}
           ref="message"
-          onChange={this.props.setMessageValue}
+          onChange={this.toggleChange}
           onKeyUp={this.setFilledTextareaHeight}
           placeholder='Message *'
           onClick={this.toggleVisibility}

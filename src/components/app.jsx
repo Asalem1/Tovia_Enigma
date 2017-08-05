@@ -11,11 +11,44 @@ export default class App extends Component {
     this.state = {
       message: '',
       expiration: '',
+      hash: '',
     }
+  }
+
+  handleDecryption(event) {
+    event.preventDefault();
+    fetch('/api/encrypt')
+    .then((res) => res.json())
+    .then((res) => {
+      console.log('here is the res in decrypt: ', res)
+    })
+    .catch((err) => {
+      console.error('here is the error decrypting: ', err);
+    });
   }
 
   handleEncryption(event) {
     event.preventDefault();
+    const { message, expiration, hash } = this.state
+    fetch('/api/encrypt', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: message,
+        expiration: expiration,
+        hash: hash
+      })
+    })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log('here is the res: ', res);
+    })
+    .catch((err) => {
+      console.error('here is the error encrypting: ', err);
+    });
   }
 
   setMessageValue(event) {
@@ -46,6 +79,7 @@ export default class App extends Component {
                   <Message
                     ref="message"
                     setMessageValue={this.setMessageValue.bind(this)}
+                    visibility={visibility}
                     value={message}
                   />
                 </div>
@@ -57,7 +91,8 @@ export default class App extends Component {
                 <br />
                 <div>
                   <Encryption
-                    onClick={this.handleEncryption.bind(this)}
+                    handleEncryption={this.handleEncryption.bind(this)}
+                    handleDecryption={this.handleDecryption.bind(this)}
                   />
                 </div>
               </form>

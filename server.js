@@ -1,11 +1,12 @@
-const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
+const express = require('express');
 const mongojs = require('mongojs');
-const db = mongojs('messages', ['messages']);
+const path = require('path');
+const bcrypt = require('bcrypt-nodejs')
 
 const app = express();
 const port = process.env.PORT || 3000
+const db = mongojs('messages', ['messages']);
 
 // Setup View Engine
 app.set('views', path.join(__dirname,  'views'));
@@ -37,23 +38,45 @@ app.get('/api/encrypt', (req, res, next) => {
 });
 
 app.post('/api/encrypt', (req, res, next) => {
-  let message = req.body;
+  let { message, hash, expiration } = req.body;
+  let encrypted = bcrypt.hashSync(message);
   // post message and expiration date
-  if (!message) {
+  let savedInfo = {
+    message: message,
+    hash: expiration,
+    expiration: expiration
+  }
+  if (!savedInfo) {
     res.status(404);
     res.json({
       error: 'information is invalid'
     });
   } else {
-    db.messages.save(message, (err, message) => {
+    db.messages.save(savedInfo, (err, message) => {
       if (err) {
         res.status(404);
         res.send(err);
       }
-      res.json(message);
+      res.json(encrypted);
     });
   }
 });
+
+// initialize: function() {
+//   this.on('creating', this.hashPassword);
+// },
+// comparePassword: function(attemptedPassword, callback) {
+//   bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
+//     callback(isMatch);
+//   });
+// },
+// hashPassword: function() {
+//   var cipher = Promise.promisify(bcrypt.hash);
+//   return cipher(this.get('password'), null, null).bind(this)
+//     .then(function(hash) {
+//       this.set('password', hash);
+//     });
+// }
 
 
 app.listen(process.env.PORT || port, () => {
