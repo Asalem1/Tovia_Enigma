@@ -14,8 +14,17 @@ export default class App extends Component {
     }
   }
 
+  handleEncryption(event) {
+    event.preventDefault();
+  }
+
+  setMessageValue(event) {
+    const { value }= event.target;
+    this.setState({ message: value });
+  }
+
   render() {
-    const { expiration, message } = this.state;
+    let { visibility, message } = this.state;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -24,7 +33,7 @@ export default class App extends Component {
               <p className="tovia-header">{"Tovia's Enigma"}</p>
             </header>
             <div>
-              <form>
+              <form onSubmit={this.handleEncryption.bind(this)}>
                 <div className="row name-row">
                   <div className="col-xs-2">
                     <img src="https://www.random.org/analysis/randbitmap-rdo.png" alt="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
@@ -35,17 +44,21 @@ export default class App extends Component {
                 </div>
                 <div className="row message-row">
                   <Message
-                    message={message}
+                    ref="message"
+                    setMessageValue={this.setMessageValue.bind(this)}
+                    value={message}
                   />
                 </div>
                 <div className="row expiration-row">
                   <Expiration
-                    expiration={expiration}
+                    ref="expiration"
                    />
                 </div>
                 <br />
                 <div>
-                  <Encryption />
+                  <Encryption
+                    onClick={this.handleEncryption.bind(this)}
+                  />
                 </div>
               </form>
             </div>

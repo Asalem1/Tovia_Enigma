@@ -5,10 +5,10 @@ export default class Message extends Component {
     super(props);
     this.state = {
       height: 30,
-      value: '',
+      value: this.props.value,
       visibility: 'hidden',
     };
-    this.setValue = this.setValue.bind(this);
+    // this.setMessageValue = this.setMessageValue.bind(this);
     this.setFilledTextareaHeight = this.setFilledTextareaHeight.bind(this);
     this.toggleVisibility = this.toggleVisibility.bind(this);
   }
@@ -27,16 +27,17 @@ export default class Message extends Component {
     }
   }
 
-  setValue(event) {
-    const { value }= event.target;
-    this.setState({ value });
-    if (!value.length) {
-      this.setState({ visibility: 'hidden' })
-    }
+  toggleVisibility() {
+    this.setState({ visibility: 'visible' });
   }
 
-  toggleVisibility() {
-    this.setState({ visibility: 'visible' })
+  componentDidUpdate() {
+    const { value }= this.refs.message.value;
+    console.log('this is the value: ', value)
+    this.setState({ value });
+    // if (!value.length) {
+    //   this.setState({ visibility: 'hidden' })
+    // }
   }
 
   getExpandableField() {
@@ -51,7 +52,7 @@ export default class Message extends Component {
       fontSize: '12px',
     }
     const isOneLine = this.state.height <= 30;
-    const { height, value } = this.state;
+    let { height, value } = this.state;
     return (
       <div>
         <label style={visibility} className="message-label" htmlFor="message">Message <i className="asteriks" style={asteriks}>*</i></label>
@@ -64,7 +65,8 @@ export default class Message extends Component {
             height,
             resize: isOneLine ? "none" : null
           }}
-          onChange={this.setValue}
+          ref="message"
+          onChange={this.props.setMessageValue}
           onKeyUp={this.setFilledTextareaHeight}
           placeholder='Message *'
           onClick={this.toggleVisibility}
