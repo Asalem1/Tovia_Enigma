@@ -10,6 +10,7 @@ export default class Message extends Component {
     };
     this.setValue = this.setValue.bind(this);
     this.setFilledTextareaHeight = this.setFilledTextareaHeight.bind(this);
+    this.toggleVisibility = this.toggleVisibility.bind(this);
   }
 
   componentDidMount() {
@@ -31,9 +32,11 @@ export default class Message extends Component {
     this.setState({ value });
     if (!value.length) {
       this.setState({ visibility: 'hidden' })
-    } else {
-      this.setState({ visibility: 'visible' })
     }
+  }
+
+  toggleVisibility() {
+    this.setState({ visibility: 'visible' })
   }
 
   getExpandableField() {
@@ -64,6 +67,7 @@ export default class Message extends Component {
           onChange={this.setValue}
           onKeyUp={this.setFilledTextareaHeight}
           placeholder='Message *'
+          onClick={this.toggleVisibility}
         />
         <div className="word-limit">
           <p>{this.wordCount()}{"/120"}</p>

@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
+import Encryption from './encryption';
 import Expiration from './expiration';
 import Message from './message';
 import Name from './name';
+import Passphrase from './passphrase';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      message: '',
+      expiration: '',
+    }
   }
 
   render() {
+    const { expiration, message } = this.state;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -21,40 +27,32 @@ export default class App extends Component {
               <form>
                 <div className="row name-row">
                   <div className="col-xs-2">
-                    <img src="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
+                    <img src="https://www.random.org/analysis/randbitmap-rdo.png" alt="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
                   </div>
                   <div className="col-xs-9">
                     <Name />
                   </div>
                 </div>
                 <div className="row message-row">
-                  <Message />
+                  <Message
+                    message={message}
+                  />
                 </div>
                 <div className="row expiration-row">
-                  <Expiration />
+                  <Expiration
+                    expiration={expiration}
+                   />
                 </div>
                 <br />
-                <div className="row">
-                  <div className="col-sm-2">
-                  <button>ENCRYPT</button>
-                  </div>
-                  <div className="col-sm-2 offset-sm-3">
-                  <button>DECRYPT</button>
-                  </div>
+                <div>
+                  <Encryption />
                 </div>
               </form>
             </div>
           </div>
         </div>
         <div className="row passphrase-component">
-          <div className="row">
-            <div>
-              <p>Your Passphrase - <a> Rp9Vz </a></p>
-            </div>
-          </div>
-          <div className="row">
-            <a>Generate new Passphrase</a>
-          </div>
+          <Passphrase />
         </div>
       </div>
     )

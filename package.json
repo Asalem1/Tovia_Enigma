@@ -20,6 +20,7 @@
     ]
   },
   "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.17.2",
     "ejs": "^2.5.7",
     "express": "^4.15.3",
@@ -28,6 +29,7 @@
     "prop-types": "^15.5.10",
     "python": "^0.0.4",
     "react": "^15.6.1",
+    "react-clipboard.js": "^1.1.2",
     "react-dom": "^15.6.1",
     "react-notification": "^6.7.1",
     "react-toolbox": "^2.0.0-beta.12",

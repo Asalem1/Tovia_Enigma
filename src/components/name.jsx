@@ -8,6 +8,11 @@ export default class Name extends Component {
       visibility: 'hidden',
     }
     this.onValueChange = this.onValueChange.bind(this);
+    this.toggleVisibility = this.toggleVisibility.bind(this);
+  }
+
+  toggleVisibility() {
+    this.setState({ visibility: 'visible' })
   }
 
   onValueChange(event) {
@@ -39,6 +44,7 @@ export default class Name extends Component {
           placeholder="Name *"
           onChange={this.onValueChange}
           defaultValue={this.state.value}
+          onClick={this.toggleVisibility}
         />
       </div>
     )
