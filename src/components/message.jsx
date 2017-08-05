@@ -18,12 +18,16 @@ export default class Message extends Component {
     this.setFilledTextareaHeight();
   }
 
+  componentDidUpdate() {
+    if (this.props.encrypted) {
+      this.refs.message.value = this.props.value;
+    }
+  }
+
   setFilledTextareaHeight() {
     if (this.mounted) {
       const element = this.ghost;
-      this.setState({
-        height: element.clientHeight,
-      });
+      this.setState({ height: element.clientHeight });
     }
   }
 
@@ -32,7 +36,6 @@ export default class Message extends Component {
   }
 
   toggleChange(event) {
-    console.log('here are the props: ', this.props)
     this.props.setMessageValue(event);
     const { value } = this.refs.message;
     this.setState({ value })

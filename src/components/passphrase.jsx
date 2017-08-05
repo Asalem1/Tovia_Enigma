@@ -49,14 +49,14 @@ export default class Passphrase extends Component {
                 onSuccess={this.onSuccess}
                 onMouseOver={this.hoverOn}
                 onMouseLeave={this.hoverOn}
-                > Rp9Vz
+                > {this.props.hash}
               </ClipboardButton>
             </p>
             {this.renderHoverEvent}
           </div>
         </div>
         <div className="row">
-          <a>Generate new Passphrase</a>
+          <a href="#" onClick={this.props.createSalt}>Generate new Passphrase</a>
         </div>
       </div>
     )

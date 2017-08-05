@@ -27,7 +27,7 @@ app.get('/', (req, res, next) => {
   res.render('index.html');
 });
 
-app.get('/api/encrypt', (req, res, next) => {
+app.get('/api/encrypt/:id', (req, res, next) => {
   db.messages.find((err, messages) => {
     if (err) {
       res.status(404);
@@ -37,13 +37,37 @@ app.get('/api/encrypt', (req, res, next) => {
   });
 });
 
-app.post('/api/encrypt', (req, res, next) => {
-  let { message, hash, expiration } = req.body;
+app.get('/:id', (req, res, next) => {
+  hash = req.params.id;
+  // check the now time
+  // compare to saved time
+  // return if applicable
+  // else whatever they want
+  db.messages.find({hash: hash}, (err, result) => {
+    console.log('this was triggered: ', result)
+    if (err) {
+      res.status(404);
+      res.json({
+        error: 'information is invalid'
+      });
+    }
+    let returnedObject = {
+      expiration: result[0].expiration,
+      message: result[0].message,
+    }
+    res.send(returnedObject);
+  })
+
+});
+
+app.post('/api/encrypt/:id', (req, res, next) => {
+  let { message, expiration } = req.body;
+  let hash = req.params.id
   let encrypted = bcrypt.hashSync(message);
-  // post message and expiration date
   let savedInfo = {
     message: message,
-    hash: expiration,
+    encrypted: encrypted,
+    hash: hash,
     expiration: expiration
   }
   if (!savedInfo) {

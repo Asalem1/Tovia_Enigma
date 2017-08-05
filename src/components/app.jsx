@@ -12,12 +12,28 @@ export default class App extends Component {
       message: '',
       expiration: '',
       hash: '',
+      encrypted: false,
+      pathName: ''
     }
+  }
+
+  componentDidMount() {
+    this.createSalt();
+    this.setState({ pathName: window.location.pathname })
+  }
+
+  createSalt() {
+    let text = "";
+    let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (let i = 0; i < 5; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    this.setState({ hash: text });
   }
 
   handleDecryption(event) {
     event.preventDefault();
-    fetch('/api/encrypt')
+    fetch('/#' + hash)
     .then((res) => res.json())
     .then((res) => {
       console.log('here is the res in decrypt: ', res)
@@ -30,7 +46,7 @@ export default class App extends Component {
   handleEncryption(event) {
     event.preventDefault();
     const { message, expiration, hash } = this.state
-    fetch('/api/encrypt', {
+    fetch('/api/encrypt/' + hash , {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -39,12 +55,12 @@ export default class App extends Component {
       body: JSON.stringify({
         message: message,
         expiration: expiration,
-        hash: hash
       })
     })
     .then((res) => res.json())
     .then((res) => {
-      console.log('here is the res: ', res);
+      this.setState({ message: res })
+      this.setState({ encrypted: true })
     })
     .catch((err) => {
       console.error('here is the error encrypting: ', err);
@@ -57,7 +73,7 @@ export default class App extends Component {
   }
 
   render() {
-    let { visibility, message } = this.state;
+    let { visibility, message, encrypted, hash } = this.state;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -81,6 +97,7 @@ export default class App extends Component {
                     setMessageValue={this.setMessageValue.bind(this)}
                     visibility={visibility}
                     value={message}
+                    encrypted={encrypted}
                   />
                 </div>
                 <div className="row expiration-row">
@@ -100,7 +117,10 @@ export default class App extends Component {
           </div>
         </div>
         <div className="row passphrase-component">
-          <Passphrase />
+          <Passphrase
+            hash={hash}
+            createSalt={this.createSalt.bind(this)}
+          />
         </div>
       </div>
     )
