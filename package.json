@@ -30,7 +30,6 @@
     "nodemon": "^1.11.0",
     "prop-types": "^15.5.10",
     "python": "^0.0.4",
-    "rc-calendar": "^9.1.2",
     "react": "^15.6.1",
     "react-clipboard.js": "^1.1.2",
     "react-dom": "^15.6.1",

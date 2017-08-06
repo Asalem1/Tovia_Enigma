@@ -1,13 +1,18 @@
+import DatePicker from 'react-toolbox/lib/date_picker';
 import Input from 'react-toolbox/lib/input';
+import Ripple from 'react-toolbox/lib/ripple';
 import Modal from  'react-modal';
 import React, { Component } from 'react';
-import Calendar from 'rc-calendar';
-import Encryption from './encryption';
-import Expiration from './expiration';
-import Message from './message';
-import Name from './name';
+import theme from 'react-toolbox/lib/ripple/theme.css';
 import Passphrase from './passphrase';
 
+const Link = (props) => (
+  <a {...props} style={{position: 'relative'}}>
+    {props.children}
+  </a>
+);
+
+const RippleLink = Ripple({spread: 3})(Link);
 
 const customStyles = {
   content : {
@@ -28,22 +33,27 @@ export default class App extends Component {
     this.state = {
       message: '',
       name: '',
-      expirationDate: '',
-      expirationTime: 0,
+      currentDate: new Date(),
+      expirationDate: '', //sets the date
+      expirationTime: 0, //sets a numerical date value
       hash: '',
-      encrypted: false,
       pathName: '',
       modalIsOpen: false,
     }
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.setExpiration = this.setExpiration.bind(this);
   }
 
   handleChange(name, value) {
-    this.setState({[name]: value });
+    if (name === 'expirationDate') {
+      this.setState({
+        [name]: value,
+        expirationTime: value.valueOf()
+      })
+    } else {
+      this.setState({[name]: value });
+    }
   };
-
 
   componentDidMount() {
     this.createSalt();
@@ -79,17 +89,6 @@ export default class App extends Component {
     });
   }
 
-  setExpiration(event) {
-    const expiration = event._d
-    let exp = expiration.toString().split(' ').splice(1, 3);
-    let newExp = [exp[1], exp[0], exp[2]].join(' ');
-    this.closeModal();
-    this.setState({
-      expirationDate: newExp,
-      expirationTime: expiration.valueOf(),
-     })
-  }
-
   handleEncryption(event) {
     event.preventDefault();
     const { message, expirationTime, expirationDate, hash } = this.state
@@ -109,7 +108,6 @@ export default class App extends Component {
     .then((res) => {
       this.setState({
         message: res,
-        encrypted: true,
        })
     })
     .catch((err) => {
@@ -117,13 +115,8 @@ export default class App extends Component {
     });
   }
 
-  setMessageValue(event) {
-    const { value } = event.target;
-    this.setState({ message: value });
-  }
-
   render() {
-    let { visibility, message, encrypted, hash, expirationDate } = this.state;
+    let { visibility, message, hash, expirationDate, currentDate } = this.state;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -162,29 +155,37 @@ export default class App extends Component {
                   </section>
                 </div>
                 <div className="row expiration-row">
-                  <Modal
-                    isOpen={this.state.modalIsOpen}
-                    onRequestClose={this.closeModal}
-                    style={customStyles}
-                    contentLabel="calendar modal"
-                  >
-                    <Calendar
-                      showDateInput={false}
-                      showToday={false}
-                      onSelect={this.setExpiration}
-                    />
-                  </Modal>
-                  <Expiration
-                    openModal={this.openModal}
-                    expiration={expirationDate}
-                   />
+                  <section>
+                    <DatePicker
+                      minDate={currentDate}
+                      name='expirationDate'
+                      label='Expiration date*'
+                      sundayFirstDayOfWeek
+                      onChange={this.handleChange.bind(this, 'expirationDate')}
+                      value={this.state.expirationDate}
+                          />
+                  </section>
                 </div>
                 <br />
                 <div>
-                  <Encryption
-                    handleEncryption={this.handleEncryption.bind(this)}
-                    handleDecryption={this.handleDecryption.bind(this)}
-                  />
+                  <RippleLink
+                    theme={theme}
+                  >
+                    <button
+                      onClick={this.handleEncryption}
+                    >
+                      ENCRYPT
+                    </button>
+                  </RippleLink>
+                  <RippleLink
+                    theme={theme}
+                  >
+                    <button
+                      onClick={this.handleEncryption}
+                    >
+                      DECRYPT
+                    </button>
+                  </RippleLink>
                 </div>
               </form>
             </div>
