@@ -52,7 +52,7 @@ app.get('/:id', (req, res, next) => {
       });
     }
     let returnedObject = {
-      expiration: result[0].expiration,
+      expirationDate: result[0].expirationDate,
       message: result[0].message,
     }
     res.send(returnedObject);
@@ -61,15 +61,17 @@ app.get('/:id', (req, res, next) => {
 });
 
 app.post('/api/encrypt/:id', (req, res, next) => {
-  let { message, expiration } = req.body;
+  let { message, expirationTime, expirationDate } = req.body;
   let hash = req.params.id
   let encrypted = bcrypt.hashSync(message);
   let savedInfo = {
     message: message,
     encrypted: encrypted,
     hash: hash,
-    expiration: expiration
+    expirationTime: expirationTime,
+    expirationDate: expirationDate,
   }
+  console.log('here is savedInfo: ', savedInfo);
   if (!savedInfo) {
     res.status(404);
     res.json({

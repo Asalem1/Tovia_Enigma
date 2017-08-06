@@ -1,25 +1,61 @@
+import Input from 'react-toolbox/lib/input';
+import Modal from  'react-modal';
 import React, { Component } from 'react';
+import Calendar from 'rc-calendar';
 import Encryption from './encryption';
 import Expiration from './expiration';
 import Message from './message';
 import Name from './name';
 import Passphrase from './passphrase';
 
+
+const customStyles = {
+  content : {
+    top: '50%',
+    left: '71%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    border: 'none',
+    minWidth: '60%',
+  }
+};
+
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       message: '',
-      expiration: '',
+      name: '',
+      expirationDate: '',
+      expirationTime: 0,
       hash: '',
       encrypted: false,
-      pathName: ''
+      pathName: '',
+      modalIsOpen: false,
     }
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.setExpiration = this.setExpiration.bind(this);
   }
+
+  handleChange(name, value) {
+    this.setState({[name]: value });
+  };
+
 
   componentDidMount() {
     this.createSalt();
     this.setState({ pathName: window.location.pathname })
+  }
+
+  closeModal() {
+    this.setState({modalIsOpen: false});
+  }
+
+  openModal() {
+    this.setState({modalIsOpen: true});
   }
 
   createSalt() {
@@ -43,9 +79,20 @@ export default class App extends Component {
     });
   }
 
+  setExpiration(event) {
+    const expiration = event._d
+    let exp = expiration.toString().split(' ').splice(1, 3);
+    let newExp = [exp[1], exp[0], exp[2]].join(' ');
+    this.closeModal();
+    this.setState({
+      expirationDate: newExp,
+      expirationTime: expiration.valueOf(),
+     })
+  }
+
   handleEncryption(event) {
     event.preventDefault();
-    const { message, expiration, hash } = this.state
+    const { message, expirationTime, expirationDate, hash } = this.state
     fetch('/api/encrypt/' + hash , {
       method: 'POST',
       headers: {
@@ -54,13 +101,16 @@ export default class App extends Component {
       },
       body: JSON.stringify({
         message: message,
-        expiration: expiration,
+        expirationTime: expirationTime,
+        expirationDate: expirationDate,
       })
     })
     .then((res) => res.json())
     .then((res) => {
-      this.setState({ message: res })
-      this.setState({ encrypted: true })
+      this.setState({
+        message: res,
+        encrypted: true,
+       })
     })
     .catch((err) => {
       console.error('here is the error encrypting: ', err);
@@ -68,12 +118,12 @@ export default class App extends Component {
   }
 
   setMessageValue(event) {
-    const { value }= event.target;
+    const { value } = event.target;
     this.setState({ message: value });
   }
 
   render() {
-    let { visibility, message, encrypted, hash } = this.state;
+    let { visibility, message, encrypted, hash, expirationDate } = this.state;
     return (
       <div className="container-fluid">
         <div className="row">
@@ -88,21 +138,45 @@ export default class App extends Component {
                     <img src="https://www.random.org/analysis/randbitmap-rdo.png" alt="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
                   </div>
                   <div className="col-xs-9">
-                    <Name />
+                    <section>
+                      <Input
+                        type='text'
+                        label='Name *'
+                        name='name'
+                        value={this.state.name}
+                        onChange={this.handleChange.bind(this, 'name')}
+                      />
+                    </section>
                   </div>
                 </div>
                 <div className="row message-row">
-                  <Message
-                    ref="message"
-                    setMessageValue={this.setMessageValue.bind(this)}
-                    visibility={visibility}
-                    value={message}
-                    encrypted={encrypted}
-                  />
+                  <section>
+                    <Input
+                      type='text'
+                      name='message'
+                      multiline label='Message *'
+                      maxLength={120}
+                      value={this.state.message}
+                      onChange={this.handleChange.bind(this, 'message')}
+                    />
+                  </section>
                 </div>
                 <div className="row expiration-row">
+                  <Modal
+                    isOpen={this.state.modalIsOpen}
+                    onRequestClose={this.closeModal}
+                    style={customStyles}
+                    contentLabel="calendar modal"
+                  >
+                    <Calendar
+                      showDateInput={false}
+                      showToday={false}
+                      onSelect={this.setExpiration}
+                    />
+                  </Modal>
                   <Expiration
-                    ref="expiration"
+                    openModal={this.openModal}
+                    expiration={expirationDate}
                    />
                 </div>
                 <br />
@@ -128,4 +202,11 @@ export default class App extends Component {
 }
       /*
 
+                  <Modal
+                    isOpen={this.state.modalIsOpen}
+                    onRequestClose={this.closeModal}
+                    style={customStyles}
+                  >
+                    <Calendar closeModal={this.closeModal} />
+                  </Modal>
       */

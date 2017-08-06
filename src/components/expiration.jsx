@@ -4,24 +4,22 @@ export default class Expiration extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: '',
       visibility: 'hidden',
     }
-    this.triggerCalendar = this.triggerCalendar.bind(this);
   }
 
-  triggerCalendar(event) {
-    // modal calendar;
-    const { value }= event.target;
-    this.setState({ value });
-    if (!value.length) {
-      this.setState({ visibility: 'hidden' })
-    } else {
-      this.setState({ visibility: 'visible' })
-    }
+  componentDidUpdate() {
+    let exp = this.props.expiration.toString().split(' ').splice(1, 3);
+    let expiration = [exp[1], exp[0], exp[2]].join(' ');
+    this.refs.expiration.value = expiration
   }
 
   render() {
+    // if (!this.refs.expiration.value.length) {
+    //   this.setState({ visibility: 'hidden' })
+    // } else {
+    //   this.setState({ visibility: 'visible' })
+    // }
     const visibility = {
       visibility: this.state.visibility,
       transition: '0.1s ease',
@@ -34,10 +32,10 @@ export default class Expiration extends Component {
         </div>
         <div className="row">
           <input
+            onClick={this.props.openModal}
             className="expiration-input"
             placeholder="Expiration date *"
-            onChange={this.triggerCalendar}
-            defaultValue={this.state.value}
+            ref="expiration"
           />
         </div>
       </div>
