@@ -1,5 +1,8 @@
-import ClipboardButton from 'react-clipboard.js';
 import React, { Component } from 'react';
+import Tooltip from 'react-toolbox/lib/tooltip';
+import Link from 'react-toolbox/lib/link';
+
+const TooltipLink = Tooltip(Link);
 
 export default class Passphrase extends Component {
   constructor(props) {
@@ -37,26 +40,26 @@ export default class Passphrase extends Component {
 
   render() {
     return (
-      <div className="container">
+      <div>
         <div className="row">
-          <div>
-            <p>Your Passphrase -
-              <ClipboardButton
-                className="passphrase"
-                component="a"
-                button-href="#"
-                data-clipboard-text="I'll be copied"
-                onSuccess={this.onSuccess}
-                onMouseOver={this.hoverOn}
-                onMouseLeave={this.hoverOn}
-                > {this.props.hash}
-              </ClipboardButton>
+          <div className="col-xs-4 col-lg-2 offset-lg-1">
+            <p>
+              Your Passphrase -
             </p>
-            {this.renderHoverEvent}
+          </div>
+          <div className="col-xs-1 offset-xs-4 offset-lg-0 passphrase-hash">
+            <TooltipLink
+              href="#"
+              label={this.props.hash}
+              tooltip='Click to copy to clipboard'
+              className="hash"
+            />
           </div>
         </div>
-        <div className="row">
-          <a href="#" onClick={this.props.createSalt}>Generate new Passphrase</a>
+        <div className="row passphrase-generator">
+          <div className="offset-lg-1">
+            <a href="#" onClick={this.props.createSalt}>Generate new Passphrase</a>
+          </div>
         </div>
       </div>
     )

@@ -1,36 +1,18 @@
+import Avatar from 'react-toolbox/lib/avatar';
+import { Button } from 'react-toolbox/lib/button';
+import { Card, CardTitle, CardActions } from 'react-toolbox/lib/card';
+import Dialog from 'react-toolbox/lib/dialog';
 import DatePicker from 'react-toolbox/lib/date_picker';
 import Input from 'react-toolbox/lib/input';
-import Ripple from 'react-toolbox/lib/ripple';
-import Modal from  'react-modal';
 import React, { Component } from 'react';
-import theme from 'react-toolbox/lib/ripple/theme.css';
+import theme from 'react-toolbox/lib/card/theme.css';
 import Passphrase from './passphrase';
-
-const Link = (props) => (
-  <a {...props} style={{position: 'relative'}}>
-    {props.children}
-  </a>
-);
-
-const RippleLink = Ripple({spread: 3})(Link);
-
-const customStyles = {
-  content : {
-    top: '50%',
-    left: '71%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    border: 'none',
-    minWidth: '60%',
-  }
-};
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      active: false,
       message: '',
       name: '',
       currentDate: new Date(),
@@ -38,10 +20,12 @@ export default class App extends Component {
       expirationTime: 0, //sets a numerical date value
       hash: '',
       pathName: '',
-      modalIsOpen: false,
+      encrypted: '',
     }
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+    this.handleEncryption = this.handleEncryption.bind(this);
+    this.handleDecryption = this.handleDecryption.bind(this);
+    this.handleToggle = this.handleToggle.bind(this);
+    this.renderEncryption = this.renderEncryption.bind(this);
   }
 
   handleChange(name, value) {
@@ -55,17 +39,13 @@ export default class App extends Component {
     }
   };
 
+  handleToggle() {
+    this.setState({active: !this.state.active});
+  }
+
   componentDidMount() {
     this.createSalt();
     this.setState({ pathName: window.location.pathname })
-  }
-
-  closeModal() {
-    this.setState({modalIsOpen: false});
-  }
-
-  openModal() {
-    this.setState({modalIsOpen: true});
   }
 
   createSalt() {
@@ -78,11 +58,13 @@ export default class App extends Component {
   }
 
   handleDecryption(event) {
-    event.preventDefault();
-    fetch('/#' + hash)
+    // event.preventDefault();
+    alert('decrypt is triggered: ');
+    fetch('/' + hash)
     .then((res) => res.json())
     .then((res) => {
       console.log('here is the res in decrypt: ', res)
+      setState({ active: false });
     })
     .catch((err) => {
       console.error('here is the error decrypting: ', err);
@@ -106,31 +88,63 @@ export default class App extends Component {
     })
     .then((res) => res.json())
     .then((res) => {
-      this.setState({
-        message: res,
-       })
+      this.setState({ encrypted: res });
+      this.handleToggle();
     })
     .catch((err) => {
       console.error('here is the error encrypting: ', err);
     });
   }
 
+  actions = [
+      { label: "CLOSE", onClick: this.handleToggle.bind(this) },
+      { label: "DECRYPT", onClick: this.handleDecryption.bind(this) },
+    ];
+
+  renderEncryption() {
+    if (this.state.encrypted.length) {
+      return (
+        <div>
+          <Dialog
+            actions={this.actions}
+            active={this.state.active}
+            onEscKeyDown={this.handleToggle}
+            onOverlayClick={this.handleToggle}
+            title='De/Encrypt'
+          >
+            <Input
+              type='text'
+              name='encrypted'
+              multiline label='Message *'
+              value={this.state.encrypted}
+              onChange={this.handleChange.bind(this, 'encrypted')}
+            />
+          </Dialog>
+        </div>
+      )
+    }
+  }
+
   render() {
     let { visibility, message, hash, expirationDate, currentDate } = this.state;
     return (
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-xs-4 offset-xs-4 tovia-container">
-            <header className="row">
-              <p className="tovia-header">{"Tovia's Enigma"}</p>
-            </header>
-            <div>
-              <form onSubmit={this.handleEncryption.bind(this)}>
+        <form onSubmit={this.handleEncryption.bind(this)}>
+          <div className="row">
+            <div className="offset-xs-4">
+              <Card
+                style={{width: '350px'}}
+              >
+                <CardTitle
+                  title="Tovia's Enigma"
+                />
                 <div className="row name-row">
                   <div className="col-xs-2">
-                    <img src="https://www.random.org/analysis/randbitmap-rdo.png" alt="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
+                    <Avatar>
+                      <img src="https://www.random.org/analysis/randbitmap-rdo.png" alt="https://www.random.org/analysis/randbitmap-rdo.png" className="image-icon" />
+                    </Avatar>
                   </div>
-                  <div className="col-xs-9">
+                  <div className="col-xs-9 name-container">
                     <section>
                       <Input
                         type='text'
@@ -163,35 +177,28 @@ export default class App extends Component {
                       sundayFirstDayOfWeek
                       onChange={this.handleChange.bind(this, 'expirationDate')}
                       value={this.state.expirationDate}
-                          />
+                    />
                   </section>
                 </div>
-                <br />
-                <div>
-                  <RippleLink
-                    theme={theme}
-                  >
-                    <button
-                      onClick={this.handleEncryption}
-                    >
-                      ENCRYPT
-                    </button>
-                  </RippleLink>
-                  <RippleLink
-                    theme={theme}
-                  >
-                    <button
-                      onClick={this.handleEncryption}
-                    >
-                      DECRYPT
-                    </button>
-                  </RippleLink>
-                </div>
-              </form>
+                <CardActions theme={theme}>
+                  <Button
+                    label="ENCRYPT"
+                    className="button"
+                    onClick={this.handleEncryption}
+                  />
+                  <Button
+                    label="DECRYPT"
+                    className="button"
+                    onClick={this.handleToggle}
+                  />
+                </CardActions>
+                { this.renderEncryption() }
+              </Card>
             </div>
           </div>
-        </div>
-        <div className="row passphrase-component">
+        </form>
+        <br />
+        <div className="offset-xs-5 offset-lg-4">
           <Passphrase
             hash={hash}
             createSalt={this.createSalt.bind(this)}
@@ -201,13 +208,3 @@ export default class App extends Component {
     )
   }
 }
-      /*
-
-                  <Modal
-                    isOpen={this.state.modalIsOpen}
-                    onRequestClose={this.closeModal}
-                    style={customStyles}
-                  >
-                    <Calendar closeModal={this.closeModal} />
-                  </Modal>
-      */

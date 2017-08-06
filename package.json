@@ -28,12 +28,10 @@
     "mongodb": "^2.2.30",
     "mongojs": "^2.4.0",
     "nodemon": "^1.11.0",
-    "prop-types": "^15.5.10",
     "python": "^0.0.4",
     "react": "^15.6.1",
-    "react-clipboard.js": "^1.1.2",
+    "react-copy-to-clipboard": "^5.0.0",
     "react-dom": "^15.6.1",
-    "react-modal": "^2.2.2",
     "react-notification": "^6.7.1",
     "react-toolbox": "^2.0.0-beta.12",
     "reactstrap": "^4.8.0"

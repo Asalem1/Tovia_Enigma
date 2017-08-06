@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Set our Routes
-app.get('/', (req, res, next) => {
+app.get('/*', (req, res, next) => {
   res.render('index.html');
 });
 
@@ -38,6 +38,7 @@ app.get('/api/encrypt/:id', (req, res, next) => {
 });
 
 app.get('/:id', (req, res, next) => {
+  console.log('server is rendering: ', req.params)
   hash = req.params.id;
   // check the now time
   // compare to saved time
