@@ -16,6 +16,7 @@ export default class App extends Component {
       active: false,
       message: '',
       name: '',
+      inputComplete: true,
       currentDate: new Date(),
       expirationDate: '', //sets the date
       expirationTime: 0, //sets a numerical date value
@@ -26,6 +27,7 @@ export default class App extends Component {
     this.handleDecryption = this.handleDecryption.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.renderEncryption = this.renderEncryption.bind(this);
+    this.inputIncomplete = this.inputIncomplete.bind(this);
   }
 
   handleChange(name, value) {
@@ -40,7 +42,10 @@ export default class App extends Component {
   };
 
   handleToggle() {
-    this.setState({active: !this.state.active});
+    this.setState({
+      active: !this.state.active,
+      inputComplete: true,
+    });
   }
 
   componentDidMount() {
@@ -78,34 +83,62 @@ export default class App extends Component {
     .catch((err) => {
       this.setState({
         message: 'It looks like the encrypted message has expired, sorry about that',
-        active: false,
       })
     })
   }
 
+  close = [
+    { label: "CLOSE", onClick: this.handleToggle.bind(this) },
+  ]
+
+  inputIncomplete() {
+    if (!this.state.inputComplete) {
+      return (
+        <div>
+          <Dialog
+            actions={this.close}
+            active={this.state.active}
+            onEscKeyDown={this.handleToggle}
+            onOverlayClick={this.handleToggle}
+            title='Incomplete Fields'
+          >
+            <p>Oops! Looks like you forgot to fill in some relevant information. Please make sure you've filled in all the relevant fields</p>
+          </Dialog>
+        </div>
+      )
+    }
+  }
+
   handleEncryption(event) {
     event.preventDefault();
-    const { message, expirationTime, expirationDate, hash } = this.state
-    fetch('/api/encrypt/' + hash , {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: message,
-        expirationTime: expirationTime,
-        expirationDate: expirationDate,
+    const { message, expirationTime, expirationDate, hash, name } = this.state
+    if (!message.length || !expirationTime || !name.length) {
+      this.setState({
+        active: true,
+         inputComplete: false,
       })
-    })
-    .then((res) => res.json())
-    .then((res) => {
-      this.setState({ encrypted: res });
-      this.handleToggle();
-    })
-    .catch((err) => {
-      console.error('here is the error encrypting: ', err);
-    });
+    } else {
+      fetch('/api/encrypt/' + hash , {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: message,
+          expirationTime: expirationTime,
+          expirationDate: expirationDate,
+        })
+      })
+      .then((res) => res.json())
+      .then((res) => {
+        this.setState({ encrypted: res });
+        this.handleToggle();
+      })
+      .catch((err) => {
+        console.error('here is the error encrypting: ', err);
+      });
+    }
   }
 
   actions = [
@@ -125,16 +158,17 @@ export default class App extends Component {
             title='De/Encrypt'
           >
             <Input
+              required='true'
               type='text'
               name='encrypted'
-              multiline label='Message *'
+              multiline label='Message'
               value={this.state.encrypted}
               onChange={this.handleChange.bind(this, 'encrypted')}
             />
           </Dialog>
         </div>
       )
-    } else {
+    } else if (this.state.inputComplete) {
       return (
         <div>
           <Dialog
@@ -145,9 +179,10 @@ export default class App extends Component {
             title='De/Encrypt'
           >
             <Input
+              required='true'
               type='text'
               name='message'
-              multiline label='Message *'
+              multiline label='Message'
               value={this.state.message}
               onChange={this.handleChange.bind(this, 'message')}
             />
@@ -179,8 +214,9 @@ export default class App extends Component {
                   <div className="col-xs-9 name-container">
                     <section>
                       <Input
+                        required='true'
                         type='text'
-                        label='Name *'
+                        label='Name'
                         name='name'
                         value={this.state.name}
                         onChange={this.handleChange.bind(this, 'name')}
@@ -191,9 +227,10 @@ export default class App extends Component {
                 <div className="row message-row">
                   <section>
                     <Input
+                      required='true'
                       type='text'
                       name='message'
-                      multiline label='Message *'
+                      multiline label='Message'
                       maxLength={120}
                       value={this.state.message}
                       onChange={this.handleChange.bind(this, 'message')}
@@ -205,7 +242,7 @@ export default class App extends Component {
                     <DatePicker
                       minDate={currentDate}
                       name='expirationDate'
-                      label='Expiration date*'
+                      label='Expiration date *'
                       sundayFirstDayOfWeek
                       onChange={this.handleChange.bind(this, 'expirationDate')}
                       value={this.state.expirationDate}
@@ -224,6 +261,7 @@ export default class App extends Component {
                     onClick={this.handleToggle}
                   />
                 </CardActions>
+                { this.inputIncomplete() }
                 { this.renderEncryption() }
               </Card>
             </div>
