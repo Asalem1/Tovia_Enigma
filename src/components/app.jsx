@@ -1,4 +1,5 @@
 import Avatar from 'react-toolbox/lib/avatar';
+import axios from 'axios';
 import { Button } from 'react-toolbox/lib/button';
 import { Card, CardTitle, CardActions } from 'react-toolbox/lib/card';
 import Dialog from 'react-toolbox/lib/dialog';
@@ -19,7 +20,6 @@ export default class App extends Component {
       expirationDate: '', //sets the date
       expirationTime: 0, //sets a numerical date value
       hash: '',
-      pathName: '',
       encrypted: '',
     }
     this.handleEncryption = this.handleEncryption.bind(this);
@@ -45,7 +45,10 @@ export default class App extends Component {
 
   componentDidMount() {
     this.createSalt();
-    this.setState({ pathName: window.location.pathname })
+    if (window.location.pathname !== '/' ) {
+      let pathname = window.location.pathname.substring(1);
+      this.setState({ hash: pathname })
+    }
   }
 
   createSalt() {
@@ -57,18 +60,27 @@ export default class App extends Component {
     this.setState({ hash: text });
   }
 
-  handleDecryption(event) {
-    // event.preventDefault();
-    alert('decrypt is triggered: ');
-    fetch('/' + hash)
-    .then((res) => res.json())
+  handleDecryption() {
+    const { hash, message } = this.state;
+    axios.get('/api/encrypt/' + hash, {
+      params: {
+        message: message
+      }
+    })
     .then((res) => {
-      console.log('here is the res in decrypt: ', res)
-      setState({ active: false });
+      let { message, expirationDate } = res.data;
+      this.setState({
+        expirationDate,
+        message,
+        active: false,
+      })
     })
     .catch((err) => {
-      console.error('here is the error decrypting: ', err);
-    });
+      this.setState({
+        message: 'It looks like the encrypted message has expired, sorry about that',
+        active: false,
+      })
+    })
   }
 
   handleEncryption(event) {
@@ -102,7 +114,7 @@ export default class App extends Component {
     ];
 
   renderEncryption() {
-    if (this.state.encrypted.length) {
+    if (this.state.encrypted.length && this.state.message.length) {
       return (
         <div>
           <Dialog
@@ -118,6 +130,26 @@ export default class App extends Component {
               multiline label='Message *'
               value={this.state.encrypted}
               onChange={this.handleChange.bind(this, 'encrypted')}
+            />
+          </Dialog>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <Dialog
+            actions={this.actions}
+            active={this.state.active}
+            onEscKeyDown={this.handleToggle}
+            onOverlayClick={this.handleToggle}
+            title='De/Encrypt'
+          >
+            <Input
+              type='text'
+              name='message'
+              multiline label='Message *'
+              value={this.state.message}
+              onChange={this.handleChange.bind(this, 'message')}
             />
           </Dialog>
         </div>

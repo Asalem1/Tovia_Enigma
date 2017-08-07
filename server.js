@@ -23,42 +23,32 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Set our Routes
-app.get('/*', (req, res, next) => {
+app.get('/', (req, res, next) => {
   res.render('index.html');
 });
 
-app.get('/api/encrypt/:id', (req, res, next) => {
-  db.messages.find((err, messages) => {
-    if (err) {
-      res.status(404);
-      res.send(err);
-    }
-    res.send(messages);
-  });
-});
-
 app.get('/:id', (req, res, next) => {
-  console.log('server is rendering: ', req.params)
-  hash = req.params.id;
-  // check the now time
-  // compare to saved time
-  // return if applicable
-  // else whatever they want
-  db.messages.find({hash: hash}, (err, result) => {
-    console.log('this was triggered: ', result)
+  res.render('index.html');
+})
+
+app.get('/api/encrypt/:id', (req, res, next) => {
+  let hash = req.params.id;
+  let encrypted = req.query.message;
+  let returnedObject = {
+    message: 'Sorry, this message no longer exists'
+  }
+  db.messages.find({hash: hash, encrypted: encrypted}, (err, result) => {
     if (err) {
-      res.status(404);
-      res.json({
-        error: 'information is invalid'
-      });
+      res.send(returnedObject);
     }
-    let returnedObject = {
-      expirationDate: result[0].expirationDate,
-      message: result[0].message,
+    if (result[0].expirationTime - Date.now() >= 0) {
+      returnedObject = {
+        expirationDate: result[0].expirationDate,
+        message: result[0].message,
+      }
     }
     res.send(returnedObject);
-  })
-
+  });
 });
 
 app.post('/api/encrypt/:id', (req, res, next) => {
@@ -72,7 +62,6 @@ app.post('/api/encrypt/:id', (req, res, next) => {
     expirationTime: expirationTime,
     expirationDate: expirationDate,
   }
-  console.log('here is savedInfo: ', savedInfo);
   if (!savedInfo) {
     res.status(404);
     res.json({
@@ -88,23 +77,6 @@ app.post('/api/encrypt/:id', (req, res, next) => {
     });
   }
 });
-
-// initialize: function() {
-//   this.on('creating', this.hashPassword);
-// },
-// comparePassword: function(attemptedPassword, callback) {
-//   bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
-//     callback(isMatch);
-//   });
-// },
-// hashPassword: function() {
-//   var cipher = Promise.promisify(bcrypt.hash);
-//   return cipher(this.get('password'), null, null).bind(this)
-//     .then(function(hash) {
-//       this.set('password', hash);
-//     });
-// }
-
 
 app.listen(process.env.PORT || port, () => {
   console.log('the server is connected to port: ', port);

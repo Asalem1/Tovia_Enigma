@@ -1,6 +1,7 @@
+import CopyToClipboard from 'react-copy-to-clipboard';
+import Link from 'react-toolbox/lib/link';
 import React, { Component } from 'react';
 import Tooltip from 'react-toolbox/lib/tooltip';
-import Link from 'react-toolbox/lib/link';
 
 const TooltipLink = Tooltip(Link);
 
@@ -8,34 +9,17 @@ export default class Passphrase extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hover: false,
+      value: '',
+      copied: false,
     }
-    this.onSuccess = this.onSuccess.bind(this);
-    this.getText = this.getText.bind(this);
-    this.hoverOn = this.hoverOn.bind(this);
+    this.copy = this.copy.bind(this);
   }
 
-  getText() {
-    return 'I\'ll be copied';
-  }
-
-  onSuccess() {
-    console.info('successfully copied');
-  }
-
-  hoverOn() {
-    this.setState({ hover: !this.state.hover })
-  }
-
-  renderHoverEvent() {
-    console.log('this is trigger: ', this)
-    if (this.state.hover) {
-      return (
-        <div>
-          <h1>this worked!</h1>
-        </div>
-      )
-    }
+  copy() {
+    this.setState({
+      value: this.props.hash,
+      copied: true
+    })
   }
 
   render() {
@@ -48,12 +32,16 @@ export default class Passphrase extends Component {
             </p>
           </div>
           <div className="col-xs-1 offset-xs-4 offset-lg-0 passphrase-hash">
+          <CopyToClipboard
+            text={this.props.hash}
+            onCopy={this.copy}
+          >
             <TooltipLink
-              href="#"
               label={this.props.hash}
               tooltip='Click to copy to clipboard'
               className="hash"
             />
+            </CopyToClipboard>
           </div>
         </div>
         <div className="row passphrase-generator">
