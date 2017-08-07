@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Button } from 'react-toolbox/lib/button';
 import { Card, CardTitle, CardActions } from 'react-toolbox/lib/card';
 import Dialog from 'react-toolbox/lib/dialog';
-import DatePicker from 'react-toolbox/lib/date_picker';
 import Input from 'react-toolbox/lib/input';
 import React, { Component } from 'react';
 import theme from 'react-toolbox/lib/card/theme.css';
