@@ -7,6 +7,9 @@ import DatePicker from 'react-toolbox/lib/date_picker';
 import Input from 'react-toolbox/lib/input';
 import React, { Component } from 'react';
 import theme from 'react-toolbox/lib/card/theme.css';
+import Calendar from './calendar';
+import Message from './message';
+import Name from './name';
 import Passphrase from './passphrase';
 
 export default class App extends Component {
@@ -23,11 +26,20 @@ export default class App extends Component {
       hash: '',
       encrypted: '',
     }
+    this.handleChange = this.handleChange.bind(this);
     this.handleEncryption = this.handleEncryption.bind(this);
     this.handleDecryption = this.handleDecryption.bind(this);
     this.handleToggle = this.handleToggle.bind(this);
     this.renderEncryption = this.renderEncryption.bind(this);
     this.inputIncomplete = this.inputIncomplete.bind(this);
+  }
+
+  componentDidMount() {
+    this.createSalt();
+    if (window.location.pathname !== '/' ) {
+      let pathname = window.location.pathname.substring(1);
+      this.setState({ hash: pathname })
+    }
   }
 
   handleChange(name, value) {
@@ -46,14 +58,6 @@ export default class App extends Component {
       active: !this.state.active,
       inputComplete: true,
     });
-  }
-
-  componentDidMount() {
-    this.createSalt();
-    if (window.location.pathname !== '/' ) {
-      let pathname = window.location.pathname.substring(1);
-      this.setState({ hash: pathname })
-    }
   }
 
   createSalt() {
@@ -87,6 +91,7 @@ export default class App extends Component {
     })
   }
 
+  // close is the button on the invalid input modal
   close = [
     { label: "CLOSE", onClick: this.handleToggle.bind(this) },
   ]
@@ -141,49 +146,51 @@ export default class App extends Component {
     }
   }
 
+  //actions are the buttons on the De/Encrypt Modal
   actions = [
       { label: "CLOSE", onClick: this.handleToggle.bind(this) },
       { label: "DECRYPT", onClick: this.handleDecryption.bind(this) },
     ];
 
   renderEncryption() {
-    if (this.state.encrypted.length && this.state.message.length) {
+    let { active, encrypted, message, inputComplete } = this.state;
+    if (encrypted.length && message.length) {
       return (
         <div>
           <Dialog
             actions={this.actions}
-            active={this.state.active}
+            active={active}
             onEscKeyDown={this.handleToggle}
             onOverlayClick={this.handleToggle}
             title='De/Encrypt'
           >
             <Input
-              required='true'
+              required
               type='text'
-              name='encrypted'
+              name='message'
               multiline label='Message'
-              value={this.state.encrypted}
-              onChange={this.handleChange.bind(this, 'encrypted')}
+              value={encrypted}
+              onChange={this.handleChange.bind(this, 'message')}
             />
           </Dialog>
         </div>
       )
-    } else if (this.state.inputComplete) {
+    } else if (inputComplete) {
       return (
         <div>
           <Dialog
             actions={this.actions}
-            active={this.state.active}
+            active={active}
             onEscKeyDown={this.handleToggle}
             onOverlayClick={this.handleToggle}
             title='De/Encrypt'
           >
             <Input
-              required='true'
+              required
               type='text'
               name='message'
               multiline label='Message'
-              value={this.state.message}
+              value={message}
               onChange={this.handleChange.bind(this, 'message')}
             />
           </Dialog>
@@ -193,7 +200,7 @@ export default class App extends Component {
   }
 
   render() {
-    let { visibility, message, hash, expirationDate, currentDate } = this.state;
+    let { visibility, message, hash, expirationDate, currentDate, name } = this.state;
     return (
       <div className="container-fluid">
         <form onSubmit={this.handleEncryption.bind(this)}>
@@ -212,42 +219,24 @@ export default class App extends Component {
                     </Avatar>
                   </div>
                   <div className="col-xs-9 name-container">
-                    <section>
-                      <Input
-                        required='true'
-                        type='text'
-                        label='Name'
-                        name='name'
-                        value={this.state.name}
-                        onChange={this.handleChange.bind(this, 'name')}
-                      />
-                    </section>
+                    <Name
+                      handleChange={this.handleChange.bind(this)}
+                      name={name}
+                    />
                   </div>
                 </div>
                 <div className="row message-row">
-                  <section>
-                    <Input
-                      required='true'
-                      type='text'
-                      name='message'
-                      multiline label='Message'
-                      maxLength={120}
-                      value={this.state.message}
-                      onChange={this.handleChange.bind(this, 'message')}
-                    />
-                  </section>
+                 <Message
+                   handleChange={this.handleChange.bind(this)}
+                   message={message}
+                 />
                 </div>
                 <div className="row expiration-row">
-                  <section>
-                    <DatePicker
-                      minDate={currentDate}
-                      name='expirationDate'
-                      label='Expiration date *'
-                      sundayFirstDayOfWeek
-                      onChange={this.handleChange.bind(this, 'expirationDate')}
-                      value={this.state.expirationDate}
-                    />
-                  </section>
+                  <Calendar
+                    currentDate={currentDate}
+                    handleChange={this.handleChange.bind(this)}
+                    expirationDate={expirationDate}
+                  />
                 </div>
                 <CardActions theme={theme}>
                   <Button

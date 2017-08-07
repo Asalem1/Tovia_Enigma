@@ -29,6 +29,7 @@
     "mongodb": "^2.2.30",
     "mongojs": "^2.4.0",
     "nodemon": "^1.11.0",
+    "prop-types": "^15.5.10",
     "python": "^0.0.4",
     "react": "^15.6.1",
     "react-copy-to-clipboard": "^5.0.0",

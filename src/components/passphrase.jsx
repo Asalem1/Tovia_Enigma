@@ -1,3 +1,4 @@
+import { func, string }  from 'prop-types';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Link from 'react-toolbox/lib/link';
 import React, { Component } from 'react';
@@ -52,5 +53,10 @@ export default class Passphrase extends Component {
       </div>
     )
   }
+}
+
+Passphrase.propTypes = {
+  hash: string.isRequired,
+  createSalt: func.isRequired,
 }
 
