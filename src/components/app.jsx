@@ -77,11 +77,13 @@ export default class App extends Component {
     })
     .then((res) => {
       let { message, expirationDate } = res.data;
+      expirationDate = new Date(expirationDate);
       this.setState({
         expirationDate,
         message,
         active: false,
       })
+      console.log('here is the state: ', this.state)
     })
     .catch((err) => {
       this.setState({

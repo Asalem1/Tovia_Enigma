@@ -1,12 +1,9 @@
 const bodyParser = require('body-parser');
 const express = require('express');
-const mongojs = require('mongojs');
 const path = require('path');
-const bcrypt = require('bcrypt-nodejs')
-
+var crypto = require('crypto')
 const app = express();
 const port = process.env.PORT || 3000
-const db = mongojs('messages', ['messages']);
 
 // Setup View Engine
 app.set('views', path.join(__dirname,  'views'));
@@ -31,50 +28,58 @@ app.get('/:id', (req, res, next) => {
   res.render('index.html');
 })
 
+const encrypt = (message, hash) => {
+  let cipher = crypto.createCipher('aes-256-ctr', hash);
+  let crypted = cipher.update(message, 'utf8', 'hex');
+  crypted += cipher.final('hex');
+  return crypted;
+}
+
+const decrypt = (message, hash) => {
+  let decipher = crypto.createDecipher('aes-256-ctr', hash);
+  let dec = decipher.update(message, 'hex', 'utf8');
+  dec += decipher.final('utf8');
+  return dec
+}
+
 app.get('/api/encrypt/:id', (req, res, next) => {
   let hash = req.params.id;
-  let encrypted = req.query.message;
-  let returnedObject = {
-    message: 'Sorry, this message no longer exists'
+  let messageToDecrypt = req.query.message;
+  let decrypted = decrypt(messageToDecrypt, hash);
+  decrypted = decrypted.split('|');
+  let returnObj = {
+    message: decrypted[0],
+    expirationDate: decrypted[1],
+    expirationTime: decrypted[2],
   }
-  db.messages.find({hash: hash, encrypted: encrypted}, (err, result) => {
-    if (err) {
-      res.send(returnedObject);
-    }
-    if (result[0].expirationTime - Date.now() >= 0) {
-      returnedObject = {
-        expirationDate: result[0].expirationDate,
-        message: result[0].message,
+  console.log('here is decrypted: ', returnObj);
+  if (!decrypted) {
+      res.status(404);
+      res.json({
+        error: 'information is invalid'
+      });
+    } else {
+      if (returnObj.expirationTime - Date.now() >= 0) {
+        console.log('here is the date')
+        res.send(returnObj);
+      } else {
+        res.send('information is invalid');
       }
     }
-    res.send(returnedObject);
-  });
 });
 
 app.post('/api/encrypt/:id', (req, res, next) => {
   let { message, expirationTime, expirationDate } = req.body;
   let hash = req.params.id
-  let encrypted = bcrypt.hashSync(message);
-  let savedInfo = {
-    message: message,
-    encrypted: encrypted,
-    hash: hash,
-    expirationTime: expirationTime,
-    expirationDate: expirationDate,
-  }
-  if (!savedInfo) {
+  let messageToEncrypt = message + '|' + expirationDate + '|' + expirationTime;
+  let encrypted = encrypt(messageToEncrypt, hash);
+  if (!encrypted) {
     res.status(404);
     res.json({
       error: 'information is invalid'
     });
   } else {
-    db.messages.save(savedInfo, (err, message) => {
-      if (err) {
-        res.status(404);
-        res.send(err);
-      }
-      res.json(encrypted);
-    });
+    res.json(encrypted);
   }
 });
 

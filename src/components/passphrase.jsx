@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { func, string }  from 'prop-types';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import Link from 'react-toolbox/lib/link';
