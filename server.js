@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
-var crypto = require('crypto')
+const crypto = require('crypto')
 const app = express();
 const port = process.env.PORT || 3000
 
