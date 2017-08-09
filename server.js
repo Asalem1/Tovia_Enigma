@@ -51,8 +51,8 @@ app.get('/api/encrypt/:id', (req, res, next) => {
     message: decrypted[0],
     expirationDate: decrypted[1],
     expirationTime: decrypted[2],
+    name: decrypted[3],
   }
-  console.log('here is decrypted: ', returnObj);
   if (!decrypted) {
       res.status(404);
       res.json({
@@ -60,7 +60,6 @@ app.get('/api/encrypt/:id', (req, res, next) => {
       });
     } else {
       if (returnObj.expirationTime - Date.now() >= 0) {
-        console.log('here is the date')
         res.send(returnObj);
       } else {
         res.send('information is invalid');
@@ -69,9 +68,9 @@ app.get('/api/encrypt/:id', (req, res, next) => {
 });
 
 app.post('/api/encrypt/:id', (req, res, next) => {
-  let { message, expirationTime, expirationDate } = req.body;
+  let { name, message, expirationTime, expirationDate } = req.body;
   let hash = req.params.id
-  let messageToEncrypt = message + '|' + expirationDate + '|' + expirationTime;
+  let messageToEncrypt = message + '|' + expirationDate + '|' + expirationTime + '|' + name;
   let encrypted = encrypt(messageToEncrypt, hash);
   if (!encrypted) {
     res.status(404);

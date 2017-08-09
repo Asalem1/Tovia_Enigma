@@ -69,21 +69,21 @@ export default class App extends Component {
   }
 
   handleDecryption() {
-    const { hash, message } = this.state;
+    const { hash, encrypted } = this.state;
     axios.get('/api/encrypt/' + hash, {
       params: {
-        message: message
+        message: encrypted
       }
     })
     .then((res) => {
-      let { message, expirationDate } = res.data;
+      let { name, message, expirationDate } = res.data;
       expirationDate = new Date(expirationDate);
       this.setState({
         expirationDate,
         message,
+        name,
         active: false,
       })
-      console.log('here is the state: ', this.state)
     })
     .catch((err) => {
       this.setState({
@@ -131,6 +131,7 @@ export default class App extends Component {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          name: name,
           message: message,
           expirationTime: expirationTime,
           expirationDate: expirationDate,
@@ -168,10 +169,10 @@ export default class App extends Component {
             <Input
               required
               type='text'
-              name='message'
+              name='encrypted'
               multiline label='Message'
               value={encrypted}
-              onChange={this.handleChange.bind(this, 'message')}
+              onChange={this.handleChange.bind(this, 'encrypted')}
             />
           </Dialog>
         </div>
@@ -189,10 +190,10 @@ export default class App extends Component {
             <Input
               required
               type='text'
-              name='message'
+              name='encrypted'
               multiline label='Message'
-              value={message}
-              onChange={this.handleChange.bind(this, 'message')}
+              value={encrypted}
+              onChange={this.handleChange.bind(this, 'encrypted')}
             />
           </Dialog>
         </div>
